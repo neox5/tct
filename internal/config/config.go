@@ -4,25 +4,23 @@ package config
 
 import "time"
 
-// CommonConfig holds shared configuration across all modes.
-type CommonConfig struct {
-	Mode         string `env:"TCT_MODE,required"`
-	ReceiverPort int    `env:"TCT_RECEIVER_PORT,default=8080,min=1,max=65535"`
-	LogLevel     string `env:"TCT_LOG_LEVEL,default=info"`
-}
+// Config holds the complete application configuration.
+// All fields are at the top level. The Mode field determines which
+// subset of fields are relevant for the current execution.
+type Config struct {
+	// Common fields
+	Mode     string `env:"TCT_MODE,required"`
+	LogLevel string `env:"TCT_LOG_LEVEL,default=info"`
 
-// SenderConfig holds sender-specific configuration.
-type SenderConfig struct {
-	Common         CommonConfig
+	// Sender fields
+	SenderPort     int           `env:"TCT_SENDER_PORT,default=9090,min=1,max=65535"`
 	ReceiverHost   string        `env:"TCT_RECEIVER_HOST,default=localhost"`
+	ReceiverPort   int           `env:"TCT_RECEIVER_PORT,default=8080,min=1,max=65535"`
 	RPS            float64       `env:"TCT_RPS,default=1.0,min=0"`
 	StartDelay     time.Duration `env:"TCT_START_DELAY,default=0s"`
 	RequestTimeout time.Duration `env:"TCT_REQUEST_TIMEOUT,default=2s,min=0s"`
-}
 
-// ReceiverConfig holds receiver-specific configuration.
-type ReceiverConfig struct {
-	Common         CommonConfig
+	// Receiver fields
 	ResponseDelay  time.Duration `env:"TCT_RESPONSE_DELAY,default=0s,min=0s"`
 	ResponseJitter time.Duration `env:"TCT_RESPONSE_JITTER,default=0s,min=0s"`
 	HangRate       float64       `env:"TCT_HANG_RATE,default=0,min=0,max=1"`
